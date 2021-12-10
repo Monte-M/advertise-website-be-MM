@@ -18,6 +18,7 @@ router.post('/register', validateRegister, async (req, res) => {
     image: req.body.image,
     password: hashValue(req.body.password),
   };
+
   const sql = `
   INSERT INTO users (username, email, city, phone_number, image, password )
   VALUES ( ?, ?, ?, ?, ?, ? )
