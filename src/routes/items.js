@@ -9,14 +9,14 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
   if (!id) return dbFail(res, 'bad input', 400);
   const sql = `
-  SELECT * FROM items
+  SELECT * FROM items WHERE id = ?
     `;
-  const dbResult = await dbAction(sql, [id], [req.email]);
+  const dbResult = await dbAction(sql, [id]);
   if (dbResult === false) return dbFail(res);
   dbSuccess(res, dbResult);
 });
 
-// GET all items
+// // GET all items
 router.get('/', async (req, res) => {
   const dbResult = await dbAction('SELECT * FROM items');
   if (dbResult === false) {
@@ -27,14 +27,26 @@ router.get('/', async (req, res) => {
 
 // POST new item
 router.post('/', authenticateToken, async (req, res) => {
-  const sql = `INSERT INTO items (title, description, city, price, item_condition) VALUES (?, ?, ?, ?, ?)`;
-  const { title, description, city, price, item_condition } = req.body;
-  const dbResult = await dbAction(sql, [
+  const sql = `INSERT INTO items (title, user_id, category_id,  description, city, price, item_condition, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  const {
     title,
+    user_id,
+    category_id,
     description,
     city,
     price,
     item_condition,
+    image,
+  } = req.body;
+  const dbResult = await dbAction(sql, [
+    title,
+    user_id,
+    category_id,
+    description,
+    city,
+    price,
+    item_condition,
+    image,
   ]);
   if (dbResult === false) {
     return res.status(500).json({ error: 'something went wrong' });

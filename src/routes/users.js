@@ -19,6 +19,17 @@ router.post('/register', validateRegister, async (req, res) => {
     password: hashValue(req.body.password),
   };
 
+  // check if user exists
+
+  // const sql = `
+  //  SELECT * FROM users
+  //  WHERE username = ?
+  //  `;
+  // const dbResult = await dbAction(sql, [req.username]);
+  // if (dbResult === true) {
+  //   return res.json({ msg: 'Such user already exists' });
+  // }
+
   const sql = `
   INSERT INTO users (username, email, city, phone_number, image, password )
   VALUES ( ?, ?, ?, ?, ?, ? )
@@ -54,10 +65,11 @@ router.post('/login', validateLogin, async (req, res) => {
     expiresIn: '1h',
   });
   const loggedInUser = {
+    id: dbResult[0].id,
     email: req.body.email,
     token: token,
   };
-  res.json({ msg: 'success', loggedInUser, dbResult });
+  res.json({ msg: 'success', loggedInUser });
 });
 
 module.exports = router;
