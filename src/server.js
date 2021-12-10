@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 
 // // routes
+const usersRoute = require('./routes/users');
 
 const PORT = process.env.SERVER_PORT || 3001;
 
@@ -16,5 +17,7 @@ app.use(express.json());
 app.get('/', async (req, res) => {
   res.send({ msg: 'got to express' });
 });
+
+app.use('/users', usersRoute);
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
