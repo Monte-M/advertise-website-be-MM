@@ -8,7 +8,10 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
   if (!id) return dbFail(res, 'bad input', 400);
   const sql = `
-  SELECT * FROM categories
+  SELECT items.category_id, categories.category, items.id, items.title, items.description,items.city, items.price, items.item_condition, items.image, items.post_timestamp, items.user_id
+  FROM categories
+  INNER JOIN items
+  ON items.category_id = categories.id
   WHERE categories.id = ?
     `;
   const dbResult = await dbAction(sql, [id]);
