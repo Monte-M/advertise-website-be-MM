@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const path = require('path');
 
 // // routes
 const usersRoute = require('./routes/users');
@@ -15,6 +16,8 @@ const app = express();
 app.use(morgan('common'));
 app.use(cors());
 app.use(express.json());
+app.use('/ad-img', express.static(path.resolve('public', 'uploads')));
+console.log('path', path.resolve('public', 'uploads'));
 
 app.get('/', async (req, res) => {
   res.send({ msg: 'got to express' });

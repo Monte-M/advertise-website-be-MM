@@ -1,8 +1,22 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
 
 const { dbAction, dbFail, dbSuccess } = require('../utils/dbHelper');
 const { authenticateToken } = require('../utils/middleware');
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // GET all user ads
 router.get('/user-items/:id', authenticateToken, async (req, res) => {
@@ -53,33 +67,47 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST new item
-router.post('/', authenticateToken, async (req, res) => {
-  const sql = `INSERT INTO items (title, user_id, category_id,  description, city, price, item_condition, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-  const {
-    title,
-    user_id,
-    category_id,
-    description,
-    city,
-    price,
-    item_condition,
-    image,
-  } = req.body;
-  const dbResult = await dbAction(sql, [
-    title,
-    user_id,
-    category_id,
-    description,
-    city,
-    price,
-    item_condition,
-    image,
-  ]);
-  if (dbResult === false) {
-    return res.status(500).json({ error: 'something went wrong' });
-  }
-  res.json({ msg: 'item added' });
-});
+router.post(
+  '/',
+  authenticateToken,
+  upload.single('image'),
+  async (req, res) => {
+    const sql = `INSERT INTO items (title, user_id, category_id,  description, city, price, item_condition, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const {
+      title,
+      user_id,
+      category_id,
+      description,
+      city,
+      price,
+      item_condition,
+    } = req.body;
+    const image = req.file.filename;
+    console.log(req.body);
+    console.log('image', image);
+
+    const dbResult = await dbAction(sql, [
+      title,
+      user_id,
+      category_id,
+      description,
+      city,
+      price,
+      item_condition,
+      image,
+    ]);
+
+    if (dbResult === false) {
+      return res.status(500).json({ error: 'something went wrong' });
+    }
+    res.json({ msg: 'item added' });
+    // console.log('req.file', req.file);
+    // if (req.file.size >= 500000) {
+    //   res.status(400).json({ error: 'Too big' });
+    // }
+    // res.json({ msg: 'image saved', image: req.file.filename });
+  },
+);
 
 router.delete('/delete/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;

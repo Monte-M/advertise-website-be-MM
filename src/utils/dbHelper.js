@@ -9,6 +9,7 @@ async function dbAction(sql, dbData = []) {
     await conn.end();
     return dbResult;
   } catch (error) {
+    console.log('error', error.message);
     return false;
   }
 }

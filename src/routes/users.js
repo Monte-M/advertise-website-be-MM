@@ -19,22 +19,39 @@ router.post('/register', validateRegister, async (req, res) => {
     password: hashValue(req.body.password),
   };
 
-  // check if user exists
+  const sql = 'SELECT * FROM users WHERE email = ?';
+  const dbResult = await dbAction(sql, [req.body.email]);
+  if (dbResult.length > 0) {
+    console.log(dbResult);
+    return res.status(400).send({
+      error: [
+        {
+          errorMsg: 'such email already exists',
+          field: 'email',
+        },
+      ],
+    });
+  }
 
-  // const sql = `
-  //  SELECT * FROM users
-  //  WHERE username = ?
-  //  `;
-  // const dbResult = await dbAction(sql, [req.username]);
-  // if (dbResult === true) {
-  //   return res.json({ msg: 'Such user already exists' });
-  // }
+  const sql2 = 'SELECT * FROM users WHERE username = ?';
+  const dbResult2 = await dbAction(sql2, [req.body.username]);
+  if (dbResult2.length > 0) {
+    console.log(dbResult);
+    return res.status(400).send({
+      error: [
+        {
+          errorMsg: 'such username already exists',
+          field: 'username',
+        },
+      ],
+    });
+  }
 
-  const sql = `
+  const sql3 = `
   INSERT INTO users (username, email, city, phone_number, image, password )
   VALUES ( ?, ?, ?, ?, ?, ? )
   `;
-  const dbResult = await dbAction(sql, [
+  const dbResult3 = await dbAction(sql3, [
     newUser.username,
     newUser.email,
     newUser.city,
@@ -42,22 +59,24 @@ router.post('/register', validateRegister, async (req, res) => {
     newUser.image,
     newUser.password,
   ]);
-
-  console.log(dbResult);
-
-  if (dbResult === false) {
+  if (dbResult3 === false) {
     return res.status(500).json({ error: 'something went wrong' });
   }
-  if (dbResult.affectedRows === 1) {
+  if (dbResult3.affectedRows === 1) {
     return res.json({ msg: 'register success', newUser: newUser.email });
   }
-  res.status(500).json({ error: 'something went wrong' });
+
+  console.log('ar vyksta');
+  // else {
+
+  // else {
 });
 
 // POST /users/login - log user
 router.post('/login', validateLogin, async (req, res) => {
   const sql = 'SELECT * FROM users WHERE email = ?';
   const dbResult = await dbAction(sql, [req.body.email]);
+  console.log('dbResult', dbResult);
   if (dbResult.length !== 1) {
     return res.status(400).send({
       error: [
@@ -68,6 +87,7 @@ router.post('/login', validateLogin, async (req, res) => {
       ],
     });
   }
+
   if (!verifyHash(req.body.password, dbResult[0].password)) {
     return dbFail(res, 'passwords not match');
   }
