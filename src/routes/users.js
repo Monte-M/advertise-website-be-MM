@@ -42,6 +42,9 @@ router.post('/register', validateRegister, async (req, res) => {
     newUser.image,
     newUser.password,
   ]);
+
+  console.log(dbResult);
+
   if (dbResult === false) {
     return res.status(500).json({ error: 'something went wrong' });
   }
@@ -56,7 +59,14 @@ router.post('/login', validateLogin, async (req, res) => {
   const sql = 'SELECT * FROM users WHERE email = ?';
   const dbResult = await dbAction(sql, [req.body.email]);
   if (dbResult.length !== 1) {
-    return dbFail(res, 'email does not exsits', 400);
+    return res.status(400).send({
+      error: [
+        {
+          errorMsg: 'bad email or password',
+          field: 'email',
+        },
+      ],
+    });
   }
   if (!verifyHash(req.body.password, dbResult[0].password)) {
     return dbFail(res, 'passwords not match');
