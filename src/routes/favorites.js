@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { dbAction, dbFail, dbSuccess } = require('../utils/dbHelper');
+const { authenticateToken } = require('../utils/middleware');
 const router = express.Router();
 
 router.get('/:id', async (req, res) => {
@@ -22,7 +23,7 @@ router.get('/:id', async (req, res) => {
   dbSuccess(res, dbResult);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   const { user_id, favorite_item } = req.body;
   const sql1 = `
   SELECT * FROM favorites
