@@ -83,8 +83,6 @@ router.post(
       item_condition,
     } = req.body;
     const image = req.file.filename;
-    console.log(req.body);
-    console.log('image', image);
 
     const dbResult = await dbAction(sql, [
       title,
@@ -105,7 +103,6 @@ router.post(
     // if (req.file.size >= 500000) {
     //   res.status(400).json({ error: 'Too big' });
     // }
-    // res.json({ msg: 'image saved', image: req.file.filename });
   },
 );
 

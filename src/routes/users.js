@@ -22,7 +22,6 @@ router.post('/register', validateRegister, async (req, res) => {
   const sql = 'SELECT * FROM users WHERE email = ?';
   const dbResult = await dbAction(sql, [req.body.email]);
   if (dbResult.length > 0) {
-    console.log(dbResult);
     return res.status(400).send({
       error: [
         {
@@ -36,7 +35,6 @@ router.post('/register', validateRegister, async (req, res) => {
   const sql2 = 'SELECT * FROM users WHERE username = ?';
   const dbResult2 = await dbAction(sql2, [req.body.username]);
   if (dbResult2.length > 0) {
-    console.log(dbResult);
     return res.status(400).send({
       error: [
         {
@@ -65,18 +63,12 @@ router.post('/register', validateRegister, async (req, res) => {
   if (dbResult3.affectedRows === 1) {
     return res.json({ msg: 'register success', newUser: newUser.email });
   }
-
-  console.log('ar vyksta');
-  // else {
-
-  // else {
 });
 
 // POST /users/login - log user
 router.post('/login', validateLogin, async (req, res) => {
   const sql = 'SELECT * FROM users WHERE email = ?';
   const dbResult = await dbAction(sql, [req.body.email]);
-  console.log('dbResult', dbResult);
   if (dbResult.length !== 1) {
     return res.status(400).send({
       error: [
