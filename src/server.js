@@ -9,7 +9,7 @@ const itemsRoute = require('./routes/items');
 const categoriesRoute = require('./routes/categories');
 const favoritesRoute = require('./routes/favorites');
 
-const PORT = process.env.SERVER_PORT || 3001;
+const PORT = process.env.PORT || 3001;
 
 const app = express();
 
@@ -22,6 +22,10 @@ app.use('/ad-img', express.static(path.resolve('public', 'uploads')));
 
 app.get('/', async (req, res) => {
   res.send({ msg: 'got to express' });
+});
+
+app.get('/testing', async (req, res) => {
+  res.send({ msg: 'success', data: [1, 2, 3] });
 });
 
 app.use('/users', usersRoute);
