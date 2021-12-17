@@ -25,9 +25,28 @@ router.get('/user-items/:id', authenticateToken, async (req, res) => {
   const sql = `
   SELECT items.id, items.category_id, items.title, items.description, items.city, items.price, items.item_condition, items.image, items.post_timestamp, categories.category
   FROM items
+  
   INNER JOIN categories
   ON items.category_id = categories.id
   WHERE user_id = ?
+    `;
+  const dbResult = await dbAction(sql, [id]);
+  if (dbResult === false) return dbFail(res);
+  dbSuccess(res, dbResult);
+});
+
+// GET single /item/:id
+router.get('/single/:id', async (req, res) => {
+  const { id } = req.params;
+  if (!id) return dbFail(res, 'bad input', 400);
+  const sql = `
+  SELECT items.id, items.title, items.description, items.category_id, items.city, items.price, items.item_condition, items.image, items.post_timestamp, users.id AS 'user_id', users.username, users.email, users.city AS 'user_city', users.phone_number, users.image AS 'user_image', users.reg_timestamp, categories.category
+  FROM items
+  INNER JOIN users
+  ON items.user_id = users.id
+  INNER JOIN categories
+  ON items.category_id = categories.id
+  WHERE items.id = ?
     `;
   const dbResult = await dbAction(sql, [id]);
   if (dbResult === false) return dbFail(res);
@@ -46,24 +65,6 @@ router.get('/:id', async (req, res) => {
   LEFT JOIN favorites
   ON items.id = favorites.favorite_item && favorites.user_id = ? 
   `;
-  const dbResult = await dbAction(sql, [id]);
-  if (dbResult === false) return dbFail(res);
-  dbSuccess(res, dbResult);
-});
-
-// GET /item/:id
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  if (!id) return dbFail(res, 'bad input', 400);
-  const sql = `
-  SELECT items.id, items.title, items.description, items.category_id, items.city, items.price, items.item_condition, items.image, items.post_timestamp, users.id AS 'user_id', users.username, users.email, users.city AS 'user_city', users.phone_number, users.image AS 'user_image', users.reg_timestamp, categories.category
-  FROM items
-  INNER JOIN users
-  ON items.user_id = users.id
-  INNER JOIN categories
-  ON items.category_id = categories.id
-  WHERE items.id = ?
-    `;
   const dbResult = await dbAction(sql, [id]);
   if (dbResult === false) return dbFail(res);
   dbSuccess(res, dbResult);
@@ -109,6 +110,7 @@ router.post(
   },
 );
 
+// delete user item
 router.delete('/delete/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   if (!id) return dbFail(res, 'bad input', 400);
@@ -120,6 +122,7 @@ router.delete('/delete/:id', authenticateToken, async (req, res) => {
   dbSuccess(res, dbResult);
 });
 
+// update user item
 router.post('/update', authenticateToken, async (req, res) => {
   const sql = `
   UPDATE items 
