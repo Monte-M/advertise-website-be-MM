@@ -14,9 +14,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
   ON items.id = favorites.favorite_item
   INNER JOIN categories
   ON items.category_id = categories.id
-
   WHERE favorites.user_id = ?
-
     `;
   const dbResult = await dbAction(sql, [id]);
   if (dbResult === false) return dbFail(res);
@@ -27,9 +25,8 @@ router.post('/', authenticateToken, async (req, res) => {
   const { user_id, favorite_item } = req.body;
   const sql1 = `
   SELECT * FROM favorites
-  WHERE favorites.favorite_item = ?`;
-  const dbResult1 = await dbAction(sql1, [favorite_item]);
-
+  WHERE favorites.favorite_item = ? && favorites.user_id = ?`;
+  const dbResult1 = await dbAction(sql1, [favorite_item, user_id]);
   if (dbResult1.length === 0) {
     const sql = `INSERT INTO favorites (user_id, favorite_item) VALUES (?, ?)`;
     const dbResult = await dbAction(sql, [user_id, favorite_item]);
@@ -38,8 +35,10 @@ router.post('/', authenticateToken, async (req, res) => {
     }
     res.json({ msg: 'favorite added' });
   } else {
-    const sql2 = `DELETE FROM favorites where favorites.favorite_item = ?`;
-    const dbResult2 = await dbAction(sql2, [favorite_item]);
+    const sql2 = `
+    DELETE FROM favorites 
+    WHERE favorites.favorite_item = ? && favorites.user_id = ?`;
+    const dbResult2 = await dbAction(sql2, [favorite_item, user_id]);
     if (dbResult2 === false) {
       return res.status(500).json({ error: 'something went wrong' });
     }

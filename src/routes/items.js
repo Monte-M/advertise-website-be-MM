@@ -18,36 +18,21 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// GET all user ads
-router.get('/user-items/:id', authenticateToken, async (req, res) => {
+// // GET all items
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
   if (!id) return dbFail(res, 'bad input', 400);
   const sql = `
-  SELECT items.id, items.category_id, items.title, items.description, items.city, items.price, items.item_condition, items.image, items.post_timestamp, categories.category
-  FROM items
-  INNER JOIN categories
-  ON items.category_id = categories.id
-  WHERE user_id = ?
-    `;
-  const dbResult = await dbAction(sql, [id]);
-  if (dbResult === false) return dbFail(res);
-  dbSuccess(res, dbResult);
-});
-
-// // GET all items
-router.get('/', async (req, res) => {
-  const dbResult = await dbAction(`
-  SELECT items.id, items.category_id, items.title, items.description, items.city, items.price, items.item_condition, items.image, items.post_timestamp, categories.category, favorites.id AS 'favorite_id'
+  SELECT items.id, items.category_id, items.title, items.description, items.city, items.price, items.item_condition, items.image, items.post_timestamp, categories.category, favorites.id AS 'favorite_id', favorites.user_id
   FROM items
   INNER JOIN categories
   ON items.category_id = categories.id
   LEFT JOIN favorites
-  ON items.id = favorites.favorite_item && favorites.user_id 
-`);
-  if (dbResult === false) {
-    return dbFail(res, 'error getting items');
-  }
-  return dbSuccess(res, dbResult);
+  ON items.id = favorites.favorite_item && favorites.user_id = ? 
+  `;
+  const dbResult = await dbAction(sql, [id]);
+  if (dbResult === false) return dbFail(res);
+  dbSuccess(res, dbResult);
 });
 
 // GET /item/:id
