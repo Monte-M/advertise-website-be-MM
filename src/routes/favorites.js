@@ -4,7 +4,7 @@ const { dbAction, dbFail, dbSuccess } = require('../utils/dbHelper');
 const { authenticateToken } = require('../utils/middleware');
 const router = express.Router();
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   if (!id) return dbFail(res, 'bad input', 400);
   const sql = `

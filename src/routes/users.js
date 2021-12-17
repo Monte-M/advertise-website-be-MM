@@ -81,7 +81,14 @@ router.post('/login', validateLogin, async (req, res) => {
   }
 
   if (!verifyHash(req.body.password, dbResult[0].password)) {
-    return dbFail(res, 'passwords not match');
+    return res.status(500).send({
+      error: [
+        {
+          errorMsg: 'bad email or password',
+          field: 'password',
+        },
+      ],
+    });
   }
   const token = jwt.sign({ email: req.body.email }, jwtSecret, {
     expiresIn: '1h',
