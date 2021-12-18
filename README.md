@@ -18,7 +18,8 @@ Use this link to see remote working website https://compassionate-rosalind-8e4c7
 1. Open this repository in your source-code editor;
 2. Run npm install;
 3. Upload SQL to your database (local or remote) from src/database/DB.sql;
-4. Fill .env example file with your database details, then change that file name to .env;
-5. Run your database;
-6. Run nodemon src/server OR node src/server;
-7. Go to website and enjoy it.
+4. Fill .env example file with your database details
+6. Change that file name to .env;
+6. Run your database;
+7. Run nodemon src/server OR node src/server;
+8. Go to website and enjoy it.
