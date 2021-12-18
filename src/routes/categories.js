@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
   SELECT * FROM categories
 `);
   if (dbResult === false) {
-    return dbFail(res, 'error getting items');
+    return dbFail(res, 'error getting categories');
   }
   return dbSuccess(res, dbResult);
 });
