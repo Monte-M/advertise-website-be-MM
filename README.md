@@ -23,3 +23,14 @@ Use this link to see remote working website https://compassionate-rosalind-8e4c7
 6. Run your database;
 7. Run nodemon src/server OR node src/server;
 8. Go to website and enjoy it.
+
+### P.S required applications, which will be installed during "npm install":
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "joi": "^17.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.4",
+    "mysql2": "^2.3.0"
