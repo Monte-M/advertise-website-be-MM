@@ -11,7 +11,8 @@ Use this link to see remote working website https://compassionate-rosalind-8e4c7
 3. Fill .env example file with database details which I will provide to you directly;
 4. Change .env example to .env;
 5. Run nodemon src/server OR node src/server;
-6. Go to website and enjoy it.
+6. Start front-end app;
+7. Go to website and enjoy it.
 
 ## Option #3 (with local back-end and database):
 
@@ -22,7 +23,8 @@ Use this link to see remote working website https://compassionate-rosalind-8e4c7
 6. Change .env example to .env;
 6. Run your database;
 7. Run nodemon src/server OR node src/server;
-8. Go to website and enjoy it.
+8. Start front-end app;
+9. Go to website and enjoy it.
 
 ### P.S required applications, which will be installed during "npm install":
     "bcryptjs": "^2.4.3",
